@@ -1,0 +1,7 @@
+
+### Key Steps to Complete the `Procfile`
+
+1.  **File Naming:** Ensure the file is named exactly **`Procfile`** (capital P, no extension).
+2.  **Location:** Place it in the root directory of your project (where `app.py`, `index.html`, and `requirements.txt` are located).
+3.  **Commit and Push:** This file is essential for deployment, so don't forget to push it to your GitHub repository:
+
