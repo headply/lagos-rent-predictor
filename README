@@ -1,0 +1,192 @@
+Lagos Rent Price Prediction Service
+
+This project provides a complete end-to-end service for predicting house and apartment rental prices in Lagos, Nigeria, based on property features. The underlying data used for training the model was scraped from the PropertyPro website. It is designed to be paired with a frontend application to offer real-time predictions.
+
+The core prediction engine uses a trained Random Forest machine learning model, which is exposed via a lightweight Flask web service.
+
+🚀 Key Technologies
+
+This application is built using the following core Python libraries:
+
+Library
+
+Purpose
+
+Flask
+
+Lightweight web server framework for building the prediction backend.
+
+gunicorn
+
+Production-ready WSGI HTTP server to run the Flask app.
+
+scikit-learn
+
+Used for the Random Forest model, preprocessing components (e.g., ColumnTransformer), and general ML utilities.
+
+pandas
+
+Core library for data manipulation and feature preparation.
+
+flask-cors
+
+Handles Cross-Origin Resource Sharing, allowing your frontend to communicate with this backend.
+
+RandomForestRegressor
+
+The underlying ensemble learning model used for prediction (loaded via joblib).
+
+📦 Model Artifacts (The artifacts/ Directory)
+
+The prediction logic relies on pre-trained model files, which must be placed in a folder named artifacts/ in the project root.
+
+The following files are required:
+
+random_forest_house_price_model.joblib: The primary trained Random Forest model object. (Note: You will need to update the file name and content in your local project to reflect the new model type.)
+
+feature_names.joblib: A list of feature names used during training, ensuring prediction data is passed in the correct order.
+
+location_filter_map.joblib: A dictionary used by the frontend to filter available locations and areas (optional for API functionality but required for typical frontend use).
+
+⚠️ IMPORTANT VERSION NOTE: The saved model artifacts must be created using the exact same version of scikit-learn, pandas, and numpy installed in the deployment environment. If you encounter errors like AttributeError or ValueError, you must retrain and re-save your artifacts using the environment's current library versions.
+
+✨ Feature Inputs
+
+The prediction service expects a JSON input containing the following 13 features:
+
+Feature Name
+
+Type
+
+Description
+
+Locality
+
+String (Categorical)
+
+The major area or Local Government Area (e.g., "Ikeja")
+
+Area
+
+String (Categorical)
+
+The specific neighborhood within the Locality (e.g., "Gbagada")
+
+Property_Type
+
+String (Categorical)
+
+Type of rental (e.g., "Apartment", "Terrace")
+
+No_of_Bedrooms
+
+Integer
+
+Number of bedrooms.
+
+No_of_Bathrooms
+
+Integer
+
+Number of bathrooms.
+
+Is_New
+
+Binary (0 or 1)
+
+1 if the property is brand new.
+
+Is_Yearly
+
+Binary (0 or 1)
+
+1 if the payment is yearly (vs monthly/quarterly).
+
+Has_Bq
+
+Binary (0 or 1)
+
+1 if the property includes a BQ (Boys Quarters).
+
+amen_none_specified
+
+Binary (0 or 1)
+
+1 if no specific amenities were listed.
+
+amen_furnished
+
+Binary (0 or 1)
+
+1 if the property is furnished.
+
+amen_security
+
+Binary (0 or 1)
+
+1 if the property has visible security features.
+
+amen_security_doors
+
+Binary (0 or 1)
+
+1 if security doors are present.
+
+amen_big_compound
+
+Binary (0 or 1)
+
+1 if the property has a notably large compound.
+
+🏃 Getting Started
+
+1. Install Dependencies
+
+Ensure you have Python installed, then install all required packages from the Canvas:
+
+pip install -r requirements.txt
+
+
+2. Run the Application
+
+The application uses Gunicorn to run the Flask app on a specified host and port (defaulting to 0.0.0.0:10000 in many deployment environments).
+
+gunicorn app:app -b 0.0.0.0:10000
+
+
+This command starts the web server, which will be ready to accept requests at http://0.0.0.0:10000.
+
+🧪 Service Endpoints
+
+Once the server is running, your frontend can communicate with the following endpoints:
+
+1. Get Locations (GET /locations)
+
+Returns a JSON object containing the mapping between Locality and Area, useful for populating frontend dropdown menus.
+
+2. Predict Price (POST /predict)
+
+Sends a JSON payload of property features to get a price prediction.
+
+Example Request Body (JSON):
+
+{
+    "Locality": "Lekki",
+    "Area": "Ikate",
+    "Property_Type": "Apartment",
+    "No_of_Bedrooms": 3,
+    "No_of_Bathrooms": 3,
+    "Is_New": 1,
+    "Is_Yearly": 0,
+    "amen_none_specified": 0,
+    "amen_furnished": 1,
+    "amen_security": 1,
+    "amen_big_compound": 0
+}
+
+
+Example Response Body (JSON):
+
+{
+    "predicted_price_naira": 7500000.00
+}
