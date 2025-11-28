@@ -1,5 +1,5 @@
 scikit-learn==1.6.1
-pandas=2.2.3
+pandas==2.2.3
 flask
 flask-cors==6.0.1
 gunicorn
