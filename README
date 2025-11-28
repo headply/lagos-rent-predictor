@@ -10,8 +10,6 @@ This application is built using the following core Python libraries:
 
 Library
 
-Purpose
-
 Flask
 
 Lightweight web server framework for building the prediction backend.
