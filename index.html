@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lagos House Rent Prediction Portal</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light gray-blue background */
+        }
+        .app-container {
+            max-width: 90%;
+            margin-top: 4rem;
+            margin-bottom: 4rem;
+        }
+        /* Custom large shadow for the main card */
+        .shadow-custom {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.05);
+        }
+        /* Style for the input fields */
+        select:required:invalid, input:required:invalid {
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-start">
+
+    <!-- Header/Navigation Bar (Commercial feel) -->
+    <header class="w-full bg-white shadow-md fixed top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex items-center justify-between h-10">
+                <span class="text-2xl font-extrabold text-indigo-700 tracking-wider">RENTAL<span class="text-green-500">IQ</span></span>
+                <nav class="hidden md:flex space-x-4">
+                    <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium">Pricing</a>
+                    <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium">About</a>
+                    <a href="#" class="px-3 py-1 bg-indigo-500 text-white rounded-lg text-sm font-semibold hover:bg-indigo-600 transition">Dashboard</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- Main Prediction Card -->
+    <div class="app-container w-full max-w-3xl bg-white shadow-custom rounded-2xl p-8 md:p-10 space-y-10 border border-gray-100">
+        
+        <!-- Value Proposition Section -->
+        <div class="text-center space-y-3">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+                Accurate Lagos Rent Valuation <span class="text-indigo-600 block sm:inline-block">in Seconds.</span>
+            </h1>
+            <p class="text-lg text-gray-600 max-w-xl mx-auto">
+                Utilize our robust Random Forest AI model trained on the latest Lagos real estate data to forecast reliable annual rent prices. Essential for investors and agents.
+            </p>
+         
+        </div>
+
+        <!-- Form for Clean Inputs -->
+        <form id="predictionForm" class="space-y-8">
+            
+            <!-- SECTION 1: LOCATION -->
+            <div class="space-y-4 p-5 bg-indigo-50 rounded-xl border border-indigo-100">
+                <h2 class="text-2xl font-bold text-indigo-800">1. Property Location</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- Locality (L2) -->
+                    <div>
+                        <label for="locality" class="block text-sm font-semibold text-gray-700 mb-1">Primary Locality (City Division)</label>
+                        <select id="locality" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition duration-150 bg-white" required disabled>
+                            <option value="">Loading areas...</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Area (L3) -->
+                    <div>
+                        <label for="area" class="block text-sm font-semibold text-gray-700 mb-1">Micro-Locality (Neighborhood)</label>
+                        <select id="area" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition duration-150 bg-white" required disabled>
+                            <option value="">Select Primary Locality first</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 2: PROPERTY DETAILS -->
+            <div class="space-y-4 p-5 bg-white rounded-xl border border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-800">2. Key Property Metrics</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    
+                    <!-- Bedrooms -->
+                    <div>
+                        <label for="bedrooms" class="block text-sm font-semibold text-gray-700 mb-1">Bedrooms (Units)</label>
+                        <input type="number" id="bedrooms" min="1" max="10" value="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition duration-150" required>
+                    </div>
+
+                    <!-- Bathrooms -->
+                    <div>
+                        <label for="bathrooms" class="block text-sm font-semibold text-gray-700 mb-1">Bathrooms (Units)</label>
+                        <input type="number" id="bathrooms" min="1" max="10" value="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition duration-150" required>
+                    </div>
+                    
+                    <!-- Property Type -->
+                    <div class="col-span-2">
+                        <label for="propertyType" class="block text-sm font-semibold text-gray-700 mb-1">Property Format (Type)</label>
+                        <select id="propertyType" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition duration-150 bg-white" required disabled>
+                            <option value="">Loading Types...</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SECTION 3: FEATURES & AMENITIES -->
+            <div class="space-y-4 p-5 bg-white rounded-xl border border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-800">3. Amenities & Status</h2>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 pt-2">
+                    
+                    <!-- Is New -->
+                    <div class="flex items-center space-x-2">
+                        <input type="checkbox" id="isNew" class="rounded text-indigo-600 focus:ring-indigo-500 h-5 w-5 border-gray-300">
+                        <label for="isNew" class="text-sm font-medium text-gray-800">New Build</label>
+                    </div>
+
+                    <!-- Gym Access -->
+                    <div class="flex items-center space-x-2">
+                        <input type="checkbox" id="amen_gym" class="rounded text-indigo-600 focus:ring-indigo-500 h-5 w-5 border-gray-300">
+                        <label for="amen_gym" class="text-sm font-medium text-gray-800">Gym Access</label>
+                    </div>
+                    
+                    <!-- Security -->
+                    <div class="flex items-center space-x-2">
+                        <input type="checkbox" id="amen_security" class="rounded text-indigo-600 focus:ring-indigo-500">
+                        <label for="amen_security" class="text-sm font-medium text-gray-800">Security</label>
+                    </div>
+
+                    <!-- Big Compound -->
+                    <div class="flex items-center space-x-2">
+                        <input type="checkbox" id="amen_big_compound" class="rounded text-indigo-600 focus:ring-indigo-500">
+                        <label for="amen_big_compound" class="text-sm font-medium text-gray-800">Big Compound</label>
+                    </div>
+                    
+                    <!-- None Specified -->
+                    <div class="flex items-center space-x-2">
+                        <input type="checkbox" id="amen_none_specified" class="rounded text-indigo-600 focus:ring-indigo-500">
+                        <label for="amen_none_specified" class="text-sm font-medium text-gray-800">Basic/None</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prediction Button -->
+            <button type="submit" id="predictButton" class="w-full py-4 bg-indigo-600 text-white text-xl font-extrabold rounded-xl shadow-lg hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.01]">
+                ANALYZE & GET RENT VALUATION
+            </button>
+        </form>
+        
+        <!-- Prediction Result Display -->
+        <div id="predictionResult" class="mt-6 p-6 text-center border-4 border-dashed border-gray-300 rounded-xl bg-gray-50 flex flex-col justify-center items-center shadow-inner transition duration-500 ease-in-out">
+            <p class="text-lg text-gray-500 font-medium">Your predicted annual rent valuation will appear here.</p>
+        </div>
+
+    </div>
+    
+    <!-- Footer for commercial feel -->
+    <footer class="w-full max-w-7xl mx-auto p-4 text-center text-sm text-gray-500 mt-8">
+        © 2025 RentalIQ Analytics. Data provided for informational and investment planning purposes.
+    </footer>
+
+    <script>
+        // Configuration
+        const API_BASE_URL = 'http://127.0.0.1:5000'; 
+        const R2_SCORE = 0.8044; // Confirmed R2 score from the new model
+        
+        const resultDiv = document.getElementById('predictionResult');
+        const predictButton = document.getElementById('predictButton');
+        const localitySelect = document.getElementById('locality');
+        const areaSelect = document.getElementById('area');
+        const propertyTypeSelect = document.getElementById('propertyType'); 
+        
+        let locationMap = {}; 
+
+        // --- Utility Functions ---
+        
+        const formatPrice = (price) => {
+            return new Intl.NumberFormat('en-NG', {
+                style: 'currency',
+                currency: 'NGN', 
+                minimumFractionDigits: 2
+            }).format(price);
+        };
+        
+        const setLoadingState = (isLoading) => {
+            predictButton.disabled = isLoading;
+            predictButton.textContent = isLoading ? 'Calculating Investment Value...' : 'ANALYZE & GET RENT VALUATION';
+            if (isLoading) {
+                // Changed loading spinner and text color to indigo
+                resultDiv.innerHTML = `<svg class="animate-spin h-5 w-5 mr-3 text-indigo-600" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><p class="text-lg text-indigo-600 font-semibold mt-2">Running Random Forest Prediction...</p>`;
+                resultDiv.classList.add('border-indigo-300', 'bg-indigo-50'); 
+                resultDiv.classList.remove('border-gray-300', 'border-red-500', 'border-green-500', 'bg-gray-50', 'bg-green-50');
+            }
+        };
+
+        const displayError = (message) => {
+            resultDiv.innerHTML = `<p class="text-xl text-red-600 font-bold mb-1">Analysis Failed!</p><p class="text-sm text-red-500">${message}</p>`;
+            resultDiv.classList.add('border-red-500', 'bg-red-50');
+            resultDiv.classList.remove('border-gray-300', 'border-indigo-300', 'border-green-500', 'bg-gray-50', 'bg-indigo-50', 'bg-green-50');
+        };
+
+        // Standard fetch with exponential backoff (necessary for reliable API calls)
+        const fetchWithRetry = async (url, options, maxRetries = 3) => {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        const errorBody = await response.json();
+                        throw new Error(`API Error: ${errorBody.message || 'Server responded with error.'}`);
+                    }
+                    return response;
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error;
+                    const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        };
+
+        // --- Dropdown Population Logic ---
+
+        const populateDropdowns = (appData) => {
+            const { location_map, property_types } = appData;
+            locationMap = location_map; 
+            
+            // Populate Locality
+            localitySelect.innerHTML = '<option value="" disabled selected>Select a Primary Locality</option>';
+            Object.keys(locationMap).sort().forEach(locality => {
+                const option = document.createElement('option');
+                option.value = locality;
+                option.textContent = locality;
+                localitySelect.appendChild(option);
+            });
+            localitySelect.disabled = false;
+            
+            // Populate Property Types (using data fetched from the API)
+            propertyTypeSelect.innerHTML = '<option value="" disabled selected>Select Type</option>';
+            property_types.sort().forEach(type => {
+                const option = document.createElement('option');
+                option.value = type;
+                option.textContent = type;
+                propertyTypeSelect.appendChild(option);
+            });
+            propertyTypeSelect.disabled = false;
+        };
+
+
+        const updateAreaDropdown = () => {
+            const selectedLocality = localitySelect.value;
+            areaSelect.innerHTML = '<option value="" disabled selected>Select a Specific Neighborhood</option>';
+            areaSelect.disabled = true;
+
+            if (selectedLocality && locationMap[selectedLocality]) {
+                const areas = locationMap[selectedLocality].sort();
+                areas.forEach(area => {
+                    const option = document.createElement('option');
+                    option.value = area;
+                    option.textContent = area;
+                    areaSelect.appendChild(option);
+                });
+                areaSelect.disabled = false;
+                if (areas.length > 0) {
+                     areaSelect.value = areas[0];
+                }
+            }
+        };
+
+        const fetchAppData = async () => {
+            try {
+                const response = await fetchWithRetry(`${API_BASE_URL}/locations`, { method: 'GET' });
+                const appData = await response.json();
+                populateDropdowns(appData);
+
+            } catch (error) {
+                console.error("Failed to fetch app data:", error);
+                localitySelect.innerHTML = '<option value="" disabled selected>Error loading locations.</option>';
+                propertyTypeSelect.innerHTML = '<option value="" disabled selected>Error loading types.</option>';
+                displayError("Failed to load necessary data from API. Is the Python server running?");
+            }
+        };
+
+        // --- Prediction Logic ---
+        
+        const handlePrediction = async (e) => {
+            e.preventDefault();
+            setLoadingState(true);
+
+            try {
+                // Payload contains the 10 raw features
+                const payload = {
+                    'Locality': localitySelect.value, 
+                    'Area': areaSelect.value, 
+                    'Property_Type': propertyTypeSelect.value, 
+                    'No_of_Bedrooms': parseInt(document.getElementById('bedrooms').value),
+                    'No_of_Bathrooms': parseInt(document.getElementById('bathrooms').value),
+                    'Is_New': document.getElementById('isNew').checked, 
+                    'amen_none_specified': document.getElementById('amen_none_specified').checked,
+                    'amen_security': document.getElementById('amen_security').checked,
+                    'amen_big_compound': document.getElementById('amen_big_compound').checked,
+                    'amen_gym': document.getElementById('amen_gym').checked, 
+                };
+
+                // Basic validation
+                if (!payload.Locality || !payload.Area || !payload.Property_Type) {
+                     throw new Error("Please select valid values for Location and Property Type.");
+                }
+
+                // 2. Send Request to Flask API
+                const response = await fetchWithRetry(`${API_BASE_URL}/predict`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                // 3. Display Result
+                const formattedPrice = formatPrice(result.predicted_price);
+                resultDiv.innerHTML = `
+                    <div class="space-y-3">
+                        <p class="text-2xl text-gray-800 font-bold mb-1">Projected Annual Rent</p>
+                        <p class="text-7xl font-extrabold text-green-600 tracking-tighter">${formattedPrice}</p>
+                        <p class="text-sm text-gray-500 mt-2">This is the estimated market rent using a model with R-squared $\\approx ${R2_SCORE}$.</p>
+                    </div>
+                `;
+                resultDiv.classList.add('border-green-500', 'bg-green-50');
+                resultDiv.classList.remove('border-gray-300', 'border-indigo-300', 'border-red-500', 'bg-gray-50', 'bg-indigo-50', 'bg-red-50');
+
+            } catch (error) {
+                console.error('Prediction failed:', error);
+                let errorMessage = error.message.includes("API Error") ? 
+                                   error.message.split(":")[1].trim() : 
+                                   error.message;
+                displayError(errorMessage);
+            } finally {
+                setLoadingState(false);
+            }
+        };
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAppData(); 
+            localitySelect.addEventListener('change', updateAreaDropdown); 
+            document.getElementById('predictionForm').addEventListener('submit', handlePrediction);
+        });
+    </script>
+</body>
+</html>
