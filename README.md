@@ -1,6 +1,6 @@
 # Lagos Rent Price Prediction Service
 
-This project provides an end-to-end service for predicting house and apartment rental prices in Lagos, Nigeria, based on property features. The underlying data used for training the model was scraped from the PropertyPro website. It is designed to power a frontend application for real-time price predictions.
+This project provides an end-to-end service for predicting house and apartment rental prices in Lagos, Nigeria, based on property features. The underlying data used for training the model was scraped from the PropertyPro website. It is designed to power a frontend application for price predictions.
 
 The core prediction engine uses a trained Random Forest machine learning model, which is exposed via a lightweight Flask web service.
 
