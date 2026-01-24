@@ -4,6 +4,42 @@ This project provides an end-to-end service for predicting customer churn in the
 
 The core prediction engine uses a trained machine learning model (Random Forest Classifier or similar), which is exposed via a lightweight Flask web service.
 
+## Quick Start
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/headply/lagos-rent-predictor.git
+   cd lagos-rent-predictor
+   ```
+
+2. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Train a model** (see [GETTING_STARTED.md](GETTING_STARTED.md) for details)
+   ```bash
+   python train_model.py --data your_telco_data.csv
+   ```
+
+4. **Run the service**
+   ```bash
+   python app.py
+   ```
+
+5. **Test the API**
+   ```bash
+   curl -X POST http://localhost:5000/predict \
+     -H "Content-Type: application/json" \
+     -d '{"tenure": 12, "monthly_charges": 70.0, "total_charges": 840.0, ...}'
+   ```
+
+## Documentation
+
+- **[GETTING_STARTED.md](GETTING_STARTED.md)** - Complete setup and installation guide
+- **[DATA_SOURCES.md](DATA_SOURCES.md)** - Information about open telecom datasets
+- **[SAMPLE_DATA.md](SAMPLE_DATA.md)** - API examples and sample data formats
+
 ---
 
 ## Key Technologies
