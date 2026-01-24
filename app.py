@@ -12,19 +12,17 @@ from flask_cors import CORS
 ARTIFACTS_DIR = 'artifacts'
 MODEL_PIPELINE = None
 FEATURE_NAMES = []
-LOCATION_MAP = {}
-PROPERTY_TYPES = []
+CATEGORICAL_MAPPINGS = {}
 
 try:
-    # Load the full Pipeline object (Preprocessor + Random Forest/Other Model)
-    MODEL_PIPELINE = joblib.load(os.path.join(ARTIFACTS_DIR, 'house_rent_prediction_model.joblib'))
+    # Load the full Pipeline object (Preprocessor + Classification Model)
+    MODEL_PIPELINE = joblib.load(os.path.join(ARTIFACTS_DIR, 'churn_prediction_model.joblib'))
     FEATURE_NAMES = joblib.load(os.path.join(ARTIFACTS_DIR, 'feature_names.joblib'))
-    LOCATION_MAP = joblib.load(os.path.join(ARTIFACTS_DIR, 'location_filter_map.joblib'))
-    PROPERTY_TYPES = joblib.load(os.path.join(ARTIFACTS_DIR, 'property_types.joblib'))
+    CATEGORICAL_MAPPINGS = joblib.load(os.path.join(ARTIFACTS_DIR, 'categorical_mappings.joblib'))
     
     EXPECTED_FEATURE_COUNT = 10
     
-    print("API: All model artifacts loaded successfully. Ready for Random Forest prediction.")
+    print("API: All model artifacts loaded successfully. Ready for churn prediction.")
 except Exception as e:
     print(f"ERROR: Could not load artifacts. Ensure 'artifacts/' folder exists and files are present. Error: {e}")
     # Setting model to None ensures API calls will fail gracefully
@@ -35,9 +33,9 @@ except Exception as e:
 app = Flask(__name__)
 CORS(app) 
 
-def predict_price_internal(cleaned_input_data: dict) -> float:
+def predict_churn_internal(cleaned_input_data: dict) -> dict:
     """
-    Internal function to process input, predict log price, and inverse transform 
+    Internal function to process input and predict customer churn 
     using the loaded SKLearn Pipeline.
     """
     if MODEL_PIPELINE is None:
@@ -49,54 +47,65 @@ def predict_price_internal(cleaned_input_data: dict) -> float:
     # 2. Reindex to ensure EXACT column order from training (CRITICAL!)
     final_features_df = processed_df.reindex(columns=FEATURE_NAMES, fill_value=0)
     
-    # 3. Get the Log Price Prediction using the full pipeline
-    # The pipeline handles OHE internally before prediction.
-    log_price_pred = MODEL_PIPELINE.predict(final_features_df)[0]
+    # 3. Get the churn prediction using the full pipeline
+    # The pipeline handles encoding internally before prediction.
+    churn_prediction = MODEL_PIPELINE.predict(final_features_df)[0]
     
-    # 4. Inverse Transform (e^(log_price) - 1)
-    predicted_price = np.expm1(log_price_pred)
+    # 4. Get the probability of churn
+    churn_probability = MODEL_PIPELINE.predict_proba(final_features_df)[0]
     
-    return predicted_price
+    # 5. Determine risk level based on probability
+    risk_level = "Low"
+    if churn_probability[1] > 0.7:
+        risk_level = "High"
+    elif churn_probability[1] > 0.4:
+        risk_level = "Medium"
+    
+    return {
+        'churn_prediction': int(churn_prediction),
+        'churn_probability': float(churn_probability[1]),
+        'risk_level': risk_level
+    }
 
 # --- 3. Define the API Endpoints ---
 
 @app.route('/predict', methods=['POST'])
 def predict():
     """
-    Endpoint that receives the 10 CLEANED features and returns the price prediction.
+    Endpoint that receives the customer features and returns the churn prediction.
     """
     try:
         data = request.get_json(force=True)
         
-        # Validation: Check for the exact 10 features
+        # Validation: Check for the exact number of features
         if len(data) != EXPECTED_FEATURE_COUNT:
              return jsonify({
                 'status': 'error', 
                 'message': f'Input validation failed: Expected {EXPECTED_FEATURE_COUNT} features, received {len(data)}. Please check all required inputs.'
             }), 400
             
-        prediction_result = predict_price_internal(data)
+        prediction_result = predict_churn_internal(data)
         
         return jsonify({
             'status': 'success',
-            'predicted_price': round(prediction_result, 2),
-            'currency': 'NGN' 
+            'churn_prediction': prediction_result['churn_prediction'],
+            'churn_probability': round(prediction_result['churn_probability'], 4),
+            'risk_level': prediction_result['risk_level']
         })
 
     except Exception as e:
         print(f"Prediction Error: {e}")
         return jsonify({'status': 'error', 'message': f'Prediction failed due to internal model error: {str(e)}'}), 400
 
-@app.route('/locations', methods=['GET'])
-def get_locations():
-    """Endpoint to provide location map and property type data for the frontend dropdowns."""
+@app.route('/categories', methods=['GET'])
+def get_categories():
+    """Endpoint to provide categorical mappings for the frontend dropdowns."""
     try:
         return jsonify({
-            'location_map': LOCATION_MAP,
-            'property_types': PROPERTY_TYPES
+            'categorical_mappings': CATEGORICAL_MAPPINGS
         })
     except Exception as e:
-        return jsonify({'error': 'Could not retrieve map data. Artifacts may be missing.'}), 500
+        return jsonify({'error': 'Could not retrieve category data. Artifacts may be missing.'}), 500
 
 
 if __name__ == '__main__':
