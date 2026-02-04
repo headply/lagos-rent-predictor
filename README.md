@@ -21,7 +21,7 @@ The core prediction engine uses a trained Random Forest machine learning model, 
 
 The service relies on pre-trained model files stored in an `artifacts/` folder:
 
-- `random_forest_house_price_model.joblib`: Trained Random Forest model object.  
+- `house_rent_prediction_model.joblib`: Trained Random Forest model object.  
 - `feature_names.joblib`: List of feature names used during training to ensure correct input order.  
 - `location_filter_map.joblib`: Dictionary for mapping locations, used by the frontend.
 
@@ -31,7 +31,7 @@ The service relies on pre-trained model files stored in an `artifacts/` folder:
 
 ## Feature Inputs
 
-The prediction service expects a JSON input with the following 13 features:
+The prediction service expects a JSON input with the following 10 features:
 
 | Feature Name           | Type          | Description |
 |------------------------|---------------|-------------|
@@ -40,11 +40,11 @@ The prediction service expects a JSON input with the following 13 features:
 | `Property_Type`        | String        | Type of rental (e.g., "Apartment", "Terrace") |
 | `No_of_Bedrooms`       | Integer       | Number of bedrooms |
 | `No_of_Bathrooms`      | Integer       | Number of bathrooms |
-| `Is_New`               | Binary (0/1) | 1 if the property is brand new |
-| `amen_none_specified`  | Binary (0/1) | 1 if no specific amenities were listed |
-| `amen_furnished`       | Binary (0/1) | 1 if the property is furnished |
-| `amen_security`        | Binary (0/1) | 1 if the property has visible security features |
-| `amen_big_compound`    | Binary (0/1) | 1 if the property has a notably large compound |
+| `Is_New`               | Boolean       | True if the property is brand new |
+| `amen_none_specified`  | Boolean       | True if no specific amenities were listed |
+| `amen_gym`             | Boolean       | True if the property has gym access |
+| `amen_security`        | Boolean       | True if the property has visible security features |
+| `amen_big_compound`    | Boolean       | True if the property has a notably large compound |
 
 ---
 
